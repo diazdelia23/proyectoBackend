@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "cancion": "Vas a quedarte",
+        "artista":"Aitana",
+        "album": "Spoiler",
+        "anio": "2018",
+        "genero": "pop"
+    },
+    {
+        "id": 5,
+        "cancion": "en un solo dia",
+        "artista":"morat",
+        "album": "amor y otras drogas",
+        "anio": "2017",
+        "genero": "pop"
+    }
+]
