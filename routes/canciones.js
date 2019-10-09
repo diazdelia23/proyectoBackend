@@ -8,7 +8,14 @@ console.log(canciones);
 
 /* GET canciones listing. */
 router.get('/', function (req, res, next) {
-  res.status(200).json(canciones);
+  if(canciones.lenght > 0)
+  {
+    res.status(200).json(canciones);
+  }
+  else{
+    res.status(400).json({error: 'error al obtener los datos'});
+  }
+  
 });
 
 /*GET UNA CANCIOON*/
@@ -20,7 +27,16 @@ router.get('/:id', function (req, res, next) {
       cancionObtenida = canciones[i];
     }
   })
-  res.status(200).json(cancionObtenida);
+
+  if (cancionObtenida.length > 0)
+  {
+    res.status(200).json(cancionObtenida);
+  }
+  else
+  {
+    res.status(404).json({error: 'error al obtener la cancion'});
+  }
+  
 });
 
 
@@ -45,10 +61,19 @@ router.delete('/:id', function (req, res, next) {
   const { id } = req.params;
   _.each(canciones, (cancion, i) => {
     if (cancion.id == id) {
-      canciones.splice(i, 1);
+      let removedItem = canciones.splice(i, 1);
     }
   })
-  res.status(204).json(canciones);
+
+  if(removedItem.id == id)
+  {
+    res.status(204).json(canciones);
+  }
+  else{
+    res.status(404).json({error: 'hubo un error al eliminar'});
+  }
+  
+ 
 });
 
 
