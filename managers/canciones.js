@@ -1,37 +1,37 @@
 var express = require('express');
+var mongoose = require('mongoose');
 const _ = require('underscore');
 let canciones = [];
-canciones = require('../datos.json');
+
+
+const Cancion = require('../model/cancion');
 
 
 
 const getList = (req, res, next) => {
 
+    Cancion.find({}, function (err, canciones) {
+        if (err) throw err;
         res.status(200)
         res.json(canciones);
-
+    });
 }
 
 
 const getCancion = (req, res, next) => {
     const { id } = req.params;
-    var cancionObtenida = [];
+    var cancionObtenida;
+    Cancion.find({ id: id }, function (err, cancionObtenida) {
+        if (err || cancionObtenida.length <= 0) {
 
-    _.each(canciones, (cancion, i) => {
-        if (cancion.id == id) {
-            cancionObtenida = canciones[i];
-
+            res.status(404)
+            res.json({ error: 'error al obtener la cancion' });
         }
+        else {
+            res.status(200)
+            res.json(cancionObtenida);
+        };
     })
-
-    if (cancionObtenida.id > 0) {
-        res.status(200)
-        res.json(cancionObtenida);
-    }
-    else {
-        res.status(404)
-        res.json({ error: 'error al obtener la cancion' });
-    }
 
 };
 
@@ -39,11 +39,16 @@ const getCancion = (req, res, next) => {
 const addCancion = (req, res, next) => {
     const { cancion, artista, album, anio, genero } = req.body;
     if (cancion && artista && album && anio && genero) {
-        const id = Math.max.apply(Math, canciones.map(function (o) { return o.id; })) + 1;
-        const newCancion = { ...req.body, id };
-        canciones.push(newCancion);
+        Cancion.findOne({}, { id: 1, _id: 0 }).sort({ id: -1 }).exec((err, item) => {
+            let id = item.id + 1;
+            const newCancion = Cancion({ ...req.body, id });
+            newCancion.save(function (err) {
+                if (err) throw err;
+            })
+
+        })
         res.status(201)
-        res.json(canciones);
+        res.send();
     }
     else {
         res.status(404)
@@ -55,23 +60,16 @@ const addCancion = (req, res, next) => {
 /*DELETEEEEEE*/
 const eliminarCancion = (req, res, next) => {
     const { id } = req.params;
-    let removedItem = [];
-    _.each(canciones, (cancion, i) => {
-        if (cancion.id == id) {
-            removedItem = canciones.splice(i, 1);
+    Cancion.findOneAndRemove({ id: id }, function (err) {
+        if (err) {
+            res.status(404)
+            res.json({ error: 'hubo un error al eliminar' });
         }
+        else {
+            res.status(204)
+            res.send();
+        };
     })
-    
-    
-    if (removedItem[0]) {
-        res.status(204)
-        res.json(canciones);
-    }
-    else {
-        res.status(404)
-        res.json({ error: 'hubo un error al eliminar' });
-    }
-
 
 };
 
@@ -81,7 +79,7 @@ const modificarCancion = (req, res, next) => {
     const { id } = req.params;
     const { cancion, artista, album, anio, genero } = req.body;
     if (cancion && artista && album && anio && genero && id) {
-        _.each(canciones, (cancioncita, i) => {
+        /*_.each(canciones, (cancioncita, i) => {
             if (cancioncita.id == id) {
                 cancioncita.cancion = cancion;
                 cancioncita.artista = artista;
@@ -90,9 +88,18 @@ const modificarCancion = (req, res, next) => {
                 cancioncita.genero = genero;
             }
 
-        });
-        res.status(204)
-        res.json(canciones);
+        });*/
+        Cancion.findOneAndUpdate({ id: id }, { cancion: cancion, artista: artista, album: album, anio: anio, genero: genero }, {new:true}, function (err, cancionNueva) {
+            if (err) {
+                res.status(404)
+                res.json({ error: 'hubo un error' });
+            }
+            else {
+                res.status(204);
+                res.json(cancionNueva);
+            };
+        })
+
     }
     else {
         res.status(404)
