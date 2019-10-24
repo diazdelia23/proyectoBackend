@@ -8,22 +8,20 @@ const Cancion = require('../model/cancion');
 
 
 
-const getList = (req, res, next) => {
+const getList = async (req, res, next) => {
 
     Cancion.find({}, function (err, canciones) {
-        if (err) throw err;
+
         res.status(200)
         res.json(canciones);
     });
 }
 
 
-const getCancion = (req, res, next) => {
+const getCancion = async (req, res, next) => {
     const { id } = req.params;
-    var cancionObtenida;
-    Cancion.find({ id: id }, function (err, cancionObtenida) {
+    Cancion.find({ id: id }, (err, cancionObtenida) => {
         if (err || cancionObtenida.length <= 0) {
-
             res.status(404)
             res.json({ error: 'error al obtener la cancion' });
         }
@@ -36,14 +34,14 @@ const getCancion = (req, res, next) => {
 };
 
 
-const addCancion = (req, res, next) => {
+const addCancion = async (req, res, next) => {
     const { cancion, artista, album, anio, genero } = req.body;
     if (cancion && artista && album && anio && genero) {
         Cancion.findOne({}, { id: 1, _id: 0 }).sort({ id: -1 }).exec((err, item) => {
             let id = item.id + 1;
             const newCancion = Cancion({ ...req.body, id });
             newCancion.save(function (err) {
-                if (err) throw err;
+
             })
 
         })
@@ -58,13 +56,14 @@ const addCancion = (req, res, next) => {
 
 
 /*DELETEEEEEE*/
-const eliminarCancion = (req, res, next) => {
+const eliminarCancion = async (req, res, next) => {
     const { id } = req.params;
-    Cancion.findOneAndRemove({ id: id }, function (err) {
-        if (err) {
+    Cancion.findOneAndRemove({ id: id }, function (err, cancionEliminada) {
+        if (err || !cancionEliminada) {
             res.status(404)
             res.json({ error: 'hubo un error al eliminar' });
         }
+
         else {
             res.status(204)
             res.send();
@@ -75,7 +74,7 @@ const eliminarCancion = (req, res, next) => {
 
 
 /*PUUUT*/
-const modificarCancion = (req, res, next) => {
+const modificarCancion = async (req, res, next) => {
     const { id } = req.params;
     const { cancion, artista, album, anio, genero } = req.body;
     if (cancion && artista && album && anio && genero && id) {
@@ -89,16 +88,9 @@ const modificarCancion = (req, res, next) => {
             }
 
         });*/
-        Cancion.findOneAndUpdate({ id: id }, { cancion: cancion, artista: artista, album: album, anio: anio, genero: genero }, {new:true}, function (err, cancionNueva) {
-            if (err) {
-                res.status(404)
-                res.json({ error: 'hubo un error' });
-            }
-            else {
-                res.status(204);
-                res.json(cancionNueva);
-            };
-        })
+        Cancion.findOneAndUpdate({ id: id }, { cancion: cancion, artista: artista, album: album, anio: anio, genero: genero }, { new: true }, function (err, cancionNueva) { });
+        res.status(204);
+        res.json(cancionNueva);
 
     }
     else {

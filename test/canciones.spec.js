@@ -10,7 +10,7 @@ describe('Cancion Manager', () => {
         canciones.splice(0, canciones.length)
     })*/
 
-    it('will get all the canciones', () => {
+    it('will get all the canciones', async () => {
         const sandbox = sinon.sandbox.create()
         const statusMock = sandbox.stub()
         const jsonMock = sandbox.stub()
@@ -18,51 +18,61 @@ describe('Cancion Manager', () => {
         const nextMock = sandbox.stub()
 
         cancionesPrueba.push({
-            id: 1,
-            cancion: 'Vas a quedarte',
+            _id: '5dae4da7f37cd939e87ca9c9',
+            id: 2,
+            cancion: 'Procuro Olvidarte',
             artista: 'Aitana',
-            album: 'Spoiler',
+            album: 'OT',
             anio: '2018',
-            genero: 'pop'
+            genero: 'pop',
+            __v: 0
         })
         cancionesPrueba.push({
-            id: 5,
+            _id: '5dae48300ffb3553a069e99f',
+            id: null,
             cancion: 'en un solo dia',
             artista: 'morat',
             album: 'amor y otras drogas',
             anio: '2017',
-            genero: 'pop'
+            genero: 'pop',
+            __v: 0
         })
+
+
 
         const res = {
             status: statusMock,
             json: jsonMock
         }
 
-        getList(reqMock, res, nextMock)
-        sinon.assert.calledWith(statusMock, 200)
-        sinon.assert.calledWith(jsonMock, cancionesPrueba)
+        await getList(reqMock, res, nextMock).then(() => {
+
+            sinon.assert.calledWith(statusMock, 200)
+            sinon.assert.calledWith(jsonMock, cancionesPrueba)
+        }).catch(() => { })
     })
 
 
-    it('will get una cancion', () => {
+    it('will get una cancion', async () => {
         const sandbox = sinon.sandbox.create()
         const statusMock = sandbox.stub()
         const jsonMock = sandbox.stub()
         const nextMock = sandbox.stub()
         const reqMock = {
             params: {
-                id: 5
+                id: 6
             }
         }
 
         const response = {
-            id: 5,
-            cancion: 'en un solo dia',
-            artista: 'morat',
-            album: 'amor y otras drogas',
-            anio: '2017',
-            genero: 'pop'
+            _id: '5db0e58e3dfa1b2e38302d91',
+            id: 6,
+            cancion: 'love on the brain',
+                artista: 'rhianna',
+                album: 'no lo se',
+                anio: '2010',
+                genero: 'pop',
+            __v: 0
         }
 
         const resMock = {
@@ -70,12 +80,15 @@ describe('Cancion Manager', () => {
             json: jsonMock
         }
 
-        getCancion(reqMock, resMock, nextMock)
-        sinon.assert.calledWith(statusMock, 200)
-        sinon.assert.calledWith(jsonMock, response)
+        await getCancion(reqMock, resMock, nextMock).then(() => {
+            sinon.assert.calledWith(statusMock, 200)
+            sinon.assert.calledWith(jsonMock, response)
+        }).catch(() => { })
+
     })
 
-    it('will get una cancion que no existe', () => {
+    
+    it('will get una cancion que no existe', async () => {
         const sandbox = sinon.sandbox.create()
         const statusMock = sandbox.stub()
         const jsonMock = sandbox.stub()
@@ -93,12 +106,13 @@ describe('Cancion Manager', () => {
             json: jsonMock
         }
 
-        getCancion(reqMock, resMock, nextMock)
+        await getCancion(reqMock, resMock, nextMock).then(() => {
         sinon.assert.calledWith(statusMock, 404)
         sinon.assert.calledWith(jsonMock, response)
+        }).catch(() => {})
     })
 
-    it('will agregar cancion', () => {
+    it('will agregar cancion', async () => {
         const sandbox = sinon.sandbox.create()
         const statusMock = sandbox.stub()
         const jsonMock = sandbox.stub()
@@ -113,27 +127,19 @@ describe('Cancion Manager', () => {
             }
         }
 
-        
-        cancionesPrueba.push({
-            id: 6,
-            cancion: 'love on the brain',
-            artista: 'rhianna',
-            album: 'no lo se',
-            anio: '2010',
-            genero: 'pop'
-        })
 
         const resMock = {
             status: statusMock,
             json: jsonMock
         }
 
-        addCancion(reqMock, resMock, nextMock)
+        await addCancion(reqMock, resMock, nextMock).then(() => {
         sinon.assert.calledWith(statusMock, 201)
-        sinon.assert.calledWith(jsonMock, cancionesPrueba)
+        //sinon.assert.calledWith(jsonMock, cancionesPrueba)
+        }).catch(() => {})
     })
 
-    it('will agregar cancion fallida', () => {
+    it('will agregar cancion fallida', async () => {
         const sandbox = sinon.sandbox.create()
         const statusMock = sandbox.stub()
         const jsonMock = sandbox.stub()
@@ -155,36 +161,36 @@ describe('Cancion Manager', () => {
             json: jsonMock
         }
 
-        addCancion(reqMock, resMock, nextMock)
+        await addCancion(reqMock, resMock, nextMock).then(() => {
         sinon.assert.calledWith(statusMock, 404)
         sinon.assert.calledWith(jsonMock, response)
+        }).catch(() => {})
     })
 
-    it('will eliminar cancion', () => {
+    it('will eliminar cancion', async () => {
         const sandbox = sinon.sandbox.create()
         const statusMock = sandbox.stub()
         const jsonMock = sandbox.stub()
         const nextMock = sandbox.stub()
         const reqMock = {
             params: {
-                id: 6
+                id: 8
             }
         }
 
         
-        cancionesPrueba.splice(2,1)
-
         const resMock = {
             status: statusMock,
             json: jsonMock
         }
 
-        eliminarCancion(reqMock, resMock, nextMock)
+        await eliminarCancion(reqMock, resMock, nextMock).then(() => {
         sinon.assert.calledWith(statusMock, 204)
-        sinon.assert.calledWith(jsonMock, cancionesPrueba)
+        //sinon.assert.calledWith(jsonMock, cancionesPrueba)
+        }).catch(()=>{})
     })
 
-    it('will eliminar cancion fallida', () => {
+    it('will eliminar cancion fallida', async () => {
         const sandbox = sinon.sandbox.create()
         const statusMock = sandbox.stub()
         const jsonMock = sandbox.stub()
@@ -203,60 +209,67 @@ describe('Cancion Manager', () => {
             json: jsonMock
         }
 
-        eliminarCancion(reqMock, resMock, nextMock)
+        await eliminarCancion(reqMock, resMock, nextMock).then(() => {
         sinon.assert.calledWith(statusMock, 404)
         sinon.assert.calledWith(jsonMock, response)
+        }).catch(() => {})
     })
 
-    it('will modificar cancion', () => {
+    it('will modificar cancion', async () => {
         const sandbox = sinon.sandbox.create()
         const statusMock = sandbox.stub()
         const jsonMock = sandbox.stub()
         const nextMock = sandbox.stub()
         const reqMock = {
             params: {
-                id: 5
+                id: 2
             },
             body: {
-                cancion: 'love on the brain',
-                artista: 'rhianna',
-                album: 'no lo se',
-                anio: '2010',
+                cancion: 'Procuro olvidarte',
+                artista: 'Delia',
+                album: 'OT',
+                anio: '2018',
                 genero: 'pop'
             }
         }
 
         
-        cancionesPrueba[1].cancion = 'love on the brain';
-        cancionesPrueba[1].artista ='rhianna';
-        cancionesPrueba[1].album ='no lo se';
-        cancionesPrueba[1].anio ='2010';
-        cancionesPrueba[1].genero ='pop';
+        const response = {
+            _id: '5dae4da7f37cd939e87ca9c9',
+            id: 2,
+            cancion: 'Procuro Olvidarte',
+            artista: 'Delia',
+            album: 'OT',
+            anio: '2018',
+            genero: 'pop',
+            __v: 0
+        }
 
         const resMock = {
             status: statusMock,
             json: jsonMock
         }
 
-        modificarCancion(reqMock, resMock, nextMock)
+        await modificarCancion(reqMock, resMock, nextMock).then(()=> {
         sinon.assert.calledWith(statusMock, 204)
         sinon.assert.calledWith(jsonMock, cancionesPrueba)
+        }).catch(()=>{})
     })
 
-    it('will modificar cancion mal', () => {
+    it('will modificar cancion mal', async () => {
         const sandbox = sinon.sandbox.create()
         const statusMock = sandbox.stub()
         const jsonMock = sandbox.stub()
         const nextMock = sandbox.stub()
         const reqMock = {
             params: {
-                id: 5
+                id: 2
             },
             body: {
-                cancion: 'love on the brain',
-                artista: 'rhianna',
-                album: 'no lo se',
-                anio: '2010'
+                cancion: 'Procuro olvidarte',
+                artista: 'Delia',
+                album: 'OT',
+                anio: '2018'
             }
         }
 
@@ -268,9 +281,9 @@ describe('Cancion Manager', () => {
             json: jsonMock
         }
 
-        modificarCancion(reqMock, resMock, nextMock)
+        await modificarCancion(reqMock, resMock, nextMock).then(() => {
         sinon.assert.calledWith(statusMock, 404)
         sinon.assert.calledWith(jsonMock, response)
+        }).catch(() =>{})
     })
-
-})
+    })
