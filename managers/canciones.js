@@ -31,7 +31,7 @@ const getList = async (req, res, next) => {
             Cancion.find({}, function (err, canciones) {
                 let cancionesString = JSON.stringify(canciones);
                 Redisclient.set('llave_list', cancionesString);
-                    Redisclient.expire('llave_list', 300);
+                    Redisclient.expire('llave_list', 150);
                     console.log('NO EXISTIA')
                 res.status(200)
                 res.json(canciones);
@@ -61,7 +61,7 @@ const getCancion = async (req, res, next) => {
                 else {
                     let cancionString = JSON.stringify(cancionObtenida);
                     Redisclient.set('llave_' + id, cancionString);
-                    Redisclient.expire('llave_' + id , 300);
+                    Redisclient.expire('llave_' + id , 150);
                     res.status(200)
                     res.json(cancionObtenida);
                 };
