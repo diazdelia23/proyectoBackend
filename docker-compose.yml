@@ -1,0 +1,32 @@
+version: '2'
+
+networks:
+  app-crud:
+    driver: bridge
+
+services:
+  mongodb-server:
+    image: 'bitnami/mongodb:latest'
+    networks:
+      - app-crud
+  redis-server:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - app-crud
+  myappB:
+    image: diazdelia23/node-web-app-b:latest
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb-server
+      - redis-server
+    networks:
+      - app-crud
+  myappF:
+    image: diazdelia23/node-web-app-f:latest
+    ports:
+      - 8000:4200
+    networks:
+      - app-crud
