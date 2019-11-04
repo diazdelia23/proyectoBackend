@@ -8,7 +8,7 @@ let canciones = [];
 const Cancion = require('../model/cancion');
 
 var redis = require('redis');
-var Redisclient = redis.createClient(); //creates a new client
+var Redisclient = redis.createClient({host: 'redis-server', port:'6379'}); //creates a new client
 
 Redisclient.on('connect', function() {
   console.log('connected');
@@ -76,11 +76,22 @@ const addCancion = async (req, res, next) => {
     const { cancion, artista, album, anio, genero } = req.body;
     if (cancion && artista && album && anio && genero) {
         Cancion.findOne({}, { id: 1, _id: 0 }).sort({ id: -1 }).exec((err, item) => {
-            let id = item.id + 1;
-            const newCancion = Cancion({ ...req.body, id });
-            newCancion.save(function (err) {
-
-            })
+            if(item != null)
+            {
+                let id = item.id + 1;
+                const newCancion = Cancion({ ...req.body, id });
+                newCancion.save(function (err) {
+    
+                })
+            }
+            else{
+                let id = 1;
+                const newCancion = Cancion({ ...req.body, id });
+                newCancion.save(function (err) {
+    
+                })
+            }
+            
 
         })
         res.status(201)
