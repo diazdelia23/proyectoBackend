@@ -21,7 +21,7 @@ const getList = async (req, res, next) => {
 const getCancion = async (req, res, next) => {
     const { id } = req.params;
     Cancion.find({ id: id }, (err, cancionObtenida) => {
-        if (err || cancionObtenida.length <= 0) {
+        if (cancionObtenida.length <= 0) {
             res.status(404)
             res.json({ error: 'error al obtener la cancion' });
         }
@@ -59,7 +59,7 @@ const addCancion = async (req, res, next) => {
 const eliminarCancion = async (req, res, next) => {
     const { id } = req.params;
     Cancion.findOneAndRemove({ id: id }, function (err, cancionEliminada) {
-        if (err || !cancionEliminada) {
+        if (!cancionEliminada) {
             res.status(404)
             res.json({ error: 'hubo un error al eliminar' });
         }

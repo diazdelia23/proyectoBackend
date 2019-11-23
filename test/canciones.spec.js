@@ -5,10 +5,7 @@ const { canciones, getList, getCancion, modificarCancion, eliminarCancion, addCa
 
 describe('Cancion Manager', () => {
     let cancionesPrueba = [];
-    /*beforeEach(() => {
-        cancionesPrueba = []
-        canciones.splice(0, canciones.length)
-    })*/
+
 
     it('will get all the canciones', async () => {
         const sandbox = sinon.sandbox.create()
@@ -16,6 +13,8 @@ describe('Cancion Manager', () => {
         const jsonMock = sandbox.stub()
         const reqMock = sandbox.stub()
         const nextMock = sandbox.stub()
+
+
 
         cancionesPrueba.push({
             _id: '5dae4da7f37cd939e87ca9c9',

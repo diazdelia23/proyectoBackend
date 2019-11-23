@@ -15,15 +15,6 @@ var cancionSchema = new Schema({
 var Cancion = mongoose.model('Cancion', cancionSchema);
 
 
-const newCancion = Cancion({
-    id: 1,
-    cancion: 'Love on the brain',
-    artista: 'Rihanna',
-    album: 'Anti',
-    anio: '2016',
-    genero: 'pop'
-});
-newCancion.save(function (err) { });
 
 
 module.exports = Cancion;
