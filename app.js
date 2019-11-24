@@ -19,7 +19,7 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use(cors({origin : 'http://localhost:4200'}));
+app.use(cors());
 
 app.use(logger('dev'));
 app.use(express.json());

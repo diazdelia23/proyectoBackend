@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-mongoose.connect('mongodb://localhost/dbMusica', { useUnifiedTopology: true, useNewUrlParser: true });
+//mongoose.connect('mongodb://localhost/dbMusica', { useUnifiedTopology: true, useNewUrlParser: true });
+mongoose.connect('mongodb://mongodb-server:27017/dbMusica', { useUnifiedTopology: true, useNewUrlParser: true });
 
 var cancionSchema = new Schema({
     id: { type: Number, required: true },
@@ -13,7 +14,6 @@ var cancionSchema = new Schema({
 })
 
 var Cancion = mongoose.model('Cancion', cancionSchema);
-
 
 
 module.exports = Cancion;
