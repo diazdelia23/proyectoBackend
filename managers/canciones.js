@@ -9,35 +9,48 @@ const Cancion = require('../model/cancion');
 
 var redis = require('redis');
 var Redisclient = redis.createClient({host: 'redis-server', port:'6379'}); //creates a new client
+var redisActivo = false;
+Redisclient.on('connect', function () {
+    console.log('connected Redis');
+    redisActivo = true;
+});
 
-Redisclient.on('connect', function() {
-  console.log('connected');
+Redisclient.on('error', function(err) {
+    console.log(`Redis error: ${err.message}`);
+    redisActivo = false;
 });
  
 
 
 const getList = async (req, res, next) => {
-
-    Redisclient.exists('llave_list', function(err, reply) {
-        if (reply === 1) {
-            Redisclient.get('llave_list', function(err, reply) {
-                canciones = JSON.parse(reply)
-                console.log(canciones);
-                console.log('YA EXISTIA')
-                res.status(200)
-                res.json(canciones);
-            });
-        } else {
-            Cancion.find({}, function (err, canciones) {
-                let cancionesString = JSON.stringify(canciones);
-                Redisclient.set('llave_list', cancionesString);
+if (redisActivo) {
+        Redisclient.exists('llave_list', function (err, reply) {
+            if (reply === 1) {
+                Redisclient.get('llave_list', function (err, reply) {
+                    canciones = JSON.parse(reply)
+                    console.log(canciones);
+                    console.log('YA EXISTIA')
+                    res.status(200)
+                    res.json(canciones);
+                });
+            } else {
+                Cancion.find({}, function (err, canciones) {
+                    let cancionesString = JSON.stringify(canciones);
+                    Redisclient.set('llave_list', cancionesString);
                     Redisclient.expire('llave_list', 150);
                     console.log('NO EXISTIA')
-                res.status(200)
-                res.json(canciones);
-            });
-        }
-    }); 
+                    res.status(200)
+                    res.json(canciones);
+                });
+            }
+        });
+    }
+    else {
+        Cancion.find({}, function (err, canciones) {
+            res.status(200)
+            res.json(canciones);
+        });
+    }
     
 }
 
@@ -45,29 +58,43 @@ const getList = async (req, res, next) => {
 const getCancion = async (req, res, next) => {
     const { id } = req.params;
 
-    Redisclient.exists('llave_' + id, function(err, reply) {
-        if (reply === 1) {
-            Redisclient.get('llave_' + id, function(err, reply) {
-                cancionObtenida = JSON.parse(reply)
-                res.status(200)
-                res.json(cancionObtenida);
-            });
-        } else {
-            Cancion.find({ id: id }, (err, cancionObtenida) => {
-                if (err || cancionObtenida.length <= 0) {
-                    res.status(404)
-                    res.json({ error: 'error al obtener la cancion' });
-                }
-                else {
-                    let cancionString = JSON.stringify(cancionObtenida);
-                    Redisclient.set('llave_' + id, cancionString);
-                    Redisclient.expire('llave_' + id , 150);
+    if (redisActivo) {
+        Redisclient.exists('llave_' + id, function (err, reply) {
+            if (reply === 1) {
+                Redisclient.get('llave_' + id, function (err, reply) {
+                    cancionObtenida = JSON.parse(reply)
                     res.status(200)
                     res.json(cancionObtenida);
-                };
-            })
-        }
-    });   
+                });
+            } else {
+                Cancion.find({ id: id }, (err, cancionObtenida) => {
+                    if (err || cancionObtenida.length <= 0) {
+                        res.status(404)
+                        res.json({ error: 'error al obtener la cancion' });
+                    }
+                    else {
+                        let cancionString = JSON.stringify(cancionObtenida);
+                        Redisclient.set('llave_' + id, cancionString);
+                        Redisclient.expire('llave_' + id, 150);
+                        res.status(200)
+                        res.json(cancionObtenida);
+                    };
+                })
+            }
+        });
+    }
+    else {
+        Cancion.find({ id: id }, (err, cancionObtenida) => {
+            if (err || cancionObtenida.length <= 0) {
+                res.status(404)
+                res.json({ error: 'error al obtener la cancion' });
+            }
+            else {
+                res.status(200)
+                res.json(cancionObtenida);
+            };
+        })
+    }
 
 };
 
