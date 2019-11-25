@@ -10,7 +10,7 @@ services:
     networks:
       - app-crud
   redis-server:
-    image: 'bitnami/redis:latest'
+    image: 'redis:latest'
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     networks:
