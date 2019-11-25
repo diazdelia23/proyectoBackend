@@ -1,8 +1,14 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+const config = require('config');
+
+const dbConfig = config.get('Mongo.dbConfig');
+
+const conexion = 'mongodb://' + dbConfig.host + ':' + dbConfig.port + '/' + dbConfig.dbName;
 
 //mongoose.connect('mongodb://localhost/dbMusica', { useUnifiedTopology: true, useNewUrlParser: true });
-mongoose.connect('mongodb://mongodb-server:27017/dbMusica', { useUnifiedTopology: true, useNewUrlParser: true });
+mongoose.connect(String(conexion), { useUnifiedTopology: true, useNewUrlParser: true });
+console.log(config.get('Mongo'));
 
 var cancionSchema = new Schema({
     id: { type: Number, required: true },

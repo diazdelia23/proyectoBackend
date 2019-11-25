@@ -1,0 +1,17 @@
+{
+    "Mongo":{
+        "dbConfig":{
+            "host": "mongodbcanciones.westus.azurecontainer.io",
+            "port": 27017,
+            "dbName": "dbMusica"
+        }
+    },
+
+    "Redis":{
+        "dbConfig":{
+            "host": "rediscanciones.westus.azurecontainer.io",
+            "port": 6379
+        }
+
+    }
+}

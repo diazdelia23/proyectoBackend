@@ -1,14 +1,16 @@
 var express = require('express');
 var mongoose = require('mongoose');
 const _ = require('underscore');
+const config = require ('config');
 
 let canciones = [];
 
 
 const Cancion = require('../model/cancion');
-
+const redisConfig = config.get('Redis.dbConfig')
+console.log(config.get('Redis'));
 var redis = require('redis');
-var Redisclient = redis.createClient({host: 'redis-server', port:'6379'}); //creates a new client
+var Redisclient = redis.createClient({host: redisConfig.host, port:redisConfig.port}); //creates a new client
 var redisActivo = false;
 Redisclient.on('connect', function () {
     console.log('connected Redis');
@@ -139,7 +141,6 @@ const eliminarCancion = async (req, res, next) => {
             res.status(404)
             res.json({ error: 'hubo un error al eliminar' });
         }
-
         else {
             res.status(204)
             res.send();

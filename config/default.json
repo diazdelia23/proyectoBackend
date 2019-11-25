@@ -1,0 +1,17 @@
+{
+    "Mongo":{
+        "dbConfig":{
+            "host": "localhost",
+            "port": 27017,
+            "dbName": "dbMusica"
+        }
+    },
+
+    "Redis":{
+        "dbConfig":{
+            "host": "localhost",
+            "port": 6379
+        }
+
+    }
+}
